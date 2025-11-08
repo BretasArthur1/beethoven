@@ -34,21 +34,6 @@ tx.remainingAccounts([JUPITER_PROGRAM_ID, vault, userAccount, ...])
 
 ---
 
-## Why?
-
-**Without Beethoven:**
-- Add Kamino → write 500 lines of CPI boilerplate
-- Add Jupiter → write 500 more lines
-- Add Marginfi → another 500 lines
-- Support 10 protocols → 5000 lines + bloated binary
-
-**With Beethoven:**
-- Add any protocol → enable feature flag
-- Binary only includes protocols you use
-- Client controls routing via account order
-
----
-
 ## How it works
 
 **Protocol detection:** First account in the slice must be the target program ID.
