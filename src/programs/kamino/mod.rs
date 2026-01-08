@@ -3,8 +3,7 @@ use {
     core::mem::MaybeUninit,
     pinocchio::{
         AccountView, Address, ProgramResult,
-        cpi::Signer,
-        cpi::invoke_signed,
+        cpi::{Signer, invoke_signed},
         error::ProgramError,
         instruction::{InstructionAccount, InstructionView},
     },
