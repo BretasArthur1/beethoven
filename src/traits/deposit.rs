@@ -32,11 +32,11 @@ pub trait Deposit<'info> {
 /// and discrimination. Users can pattern match on this to perform custom
 /// validation before executing the deposit.
 pub enum DepositContext<'info> {
-    #[cfg(feature = "kamino")]
-    Kamino(crate::programs::kamino::KaminoDepositAccounts<'info>),
+    #[cfg(feature = "kamino-deposit")]
+    Kamino(crate::programs::deposit::kamino::KaminoDepositAccounts<'info>),
 
-    #[cfg(feature = "jupiter")]
-    Jupiter(crate::programs::jupiter::JupiterEarnDepositAccounts<'info>),
+    #[cfg(feature = "jupiter-deposit")]
+    Jupiter(crate::programs::deposit::jupiter::JupiterEarnDepositAccounts<'info>),
 }
 
 impl<'info> Deposit<'info> for DepositContext<'info> {
@@ -44,14 +44,18 @@ impl<'info> Deposit<'info> for DepositContext<'info> {
 
     fn deposit_signed(ctx: &Self::Accounts, amount: u64, signer_seeds: &[Signer]) -> ProgramResult {
         match ctx {
-            #[cfg(feature = "kamino")]
+            #[cfg(feature = "kamino-deposit")]
             DepositContext::Kamino(kamino_ctx) => {
-                crate::programs::kamino::Kamino::deposit_signed(kamino_ctx, amount, signer_seeds)
+                crate::programs::deposit::kamino::Kamino::deposit_signed(
+                    kamino_ctx,
+                    amount,
+                    signer_seeds,
+                )
             }
 
-            #[cfg(feature = "jupiter")]
+            #[cfg(feature = "jupiter-deposit")]
             DepositContext::Jupiter(jupiter_ctx) => {
-                crate::programs::jupiter::JupiterEarn::deposit_signed(
+                crate::programs::deposit::jupiter::JupiterEarn::deposit_signed(
                     jupiter_ctx,
                     amount,
                     signer_seeds,
@@ -104,21 +108,22 @@ pub fn try_from_deposit_context<'info>(
 ) -> Result<DepositContext<'info>, ProgramError> {
     let detector_account = accounts.first().ok_or(ProgramError::NotEnoughAccountKeys)?;
 
-    #[cfg(feature = "kamino")]
+    #[cfg(feature = "kamino-deposit")]
     if address_eq(
         detector_account.address(),
-        &crate::programs::kamino::KAMINO_LEND_PROGRAM_ID,
+        &crate::programs::deposit::kamino::KAMINO_LEND_PROGRAM_ID,
     ) {
-        let ctx = crate::programs::kamino::KaminoDepositAccounts::try_from(accounts)?;
+        let ctx = crate::programs::deposit::kamino::KaminoDepositAccounts::try_from(accounts)?;
         return Ok(DepositContext::Kamino(ctx));
     }
 
-    #[cfg(feature = "jupiter")]
+    #[cfg(feature = "jupiter-deposit")]
     if address_eq(
         detector_account.address(),
-        &crate::programs::jupiter::JUPITER_EARN_PROGRAM_ID,
+        &crate::programs::deposit::jupiter::JUPITER_EARN_PROGRAM_ID,
     ) {
-        let ctx = crate::programs::jupiter::JupiterEarnDepositAccounts::try_from(accounts)?;
+        let ctx =
+            crate::programs::deposit::jupiter::JupiterEarnDepositAccounts::try_from(accounts)?;
         return Ok(DepositContext::Jupiter(ctx));
     }
 

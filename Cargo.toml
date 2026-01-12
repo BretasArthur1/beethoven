@@ -3,12 +3,40 @@ name = "beethoven"
 description = "A Trait-based client that let you compose program extremely easily"
 version = "0.0.1"
 license = "MIT"
-edition = "2024"
+edition = "2021"
 
 [features]
-default = ["jupiter", "kamino"]
-jupiter = []
-kamino = []
+default = ["deposit", "swap"]
+
+# Action groups
+deposit = ["kamino-deposit", "jupiter-deposit"]
+swap = ["perena-swap", "solfi-swap", "solfi_v2-swap", "manifest-swap", "heaven-swap", "aldrin-swap", "aldrin_v2-swap", "futarchy-swap", "gamma-swap"]
+
+# Deposit protocols
+kamino-deposit = []
+jupiter-deposit = []
+
+# Swap protocols
+perena-swap = []
+solfi-swap = []
+solfi_v2-swap = []
+manifest-swap = []
+heaven-swap = []
+aldrin-swap = []
+aldrin_v2-swap = []
+futarchy-swap = []
+gamma-swap = []
 
 [dependencies]
 pinocchio = { version = "0.10.0", features = ["cpi"] }
+five8_const = "0.1"
+
+[workspace]
+members = ["program-test"]
+
+[dev-dependencies]
+litesvm = "0.6"
+solana-sdk = "2.2"
+spl-token = "7"
+base64 = "0.22"
+serde_json = "1"

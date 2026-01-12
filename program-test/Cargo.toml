@@ -1,0 +1,14 @@
+[package]
+name = "beethoven-test"
+version = "0.0.1"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib", "lib"]
+
+[features]
+default = []
+
+[dependencies]
+beethoven = { path = "..", features = ["deposit", "swap"] }
+pinocchio = { version = "0.10.1" }
