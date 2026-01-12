@@ -1,6 +1,6 @@
 use {
-    beethoven::{Deposit, DepositContext, try_from_deposit_context},
-    pinocchio::{AccountView, ProgramResult, error::ProgramError},
+    beethoven::{try_from_deposit_context, Deposit, DepositContext},
+    pinocchio::{error::ProgramError, AccountView, ProgramResult},
 };
 
 /// Instruction data for Deposit

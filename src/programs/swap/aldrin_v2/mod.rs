@@ -2,10 +2,10 @@ use {
     crate::Swap,
     core::mem::MaybeUninit,
     pinocchio::{
-        AccountView, Address, ProgramResult,
-        cpi::{Signer, invoke_signed},
+        cpi::{invoke_signed, Signer},
         error::ProgramError,
         instruction::{InstructionAccount, InstructionView},
+        AccountView, Address, ProgramResult,
     },
 };
 
@@ -67,21 +67,8 @@ impl<'info> TryFrom<&'info [AccountView]> for AldrinV2SwapAccounts<'info> {
             return Err(ProgramError::NotEnoughAccountKeys);
         }
 
-        let [
-            aldrin_v2_program,
-            pool,
-            pool_signer,
-            pool_mint,
-            base_token_vault,
-            quote_token_vault,
-            fee_pool_token_account,
-            wallet_authority,
-            user_base_token_account,
-            user_quote_token_account,
-            curve,
-            token_program,
-            ..,
-        ] = accounts
+        let [aldrin_v2_program, pool, pool_signer, pool_mint, base_token_vault, quote_token_vault, fee_pool_token_account, wallet_authority, user_base_token_account, user_quote_token_account, curve, token_program, ..] =
+            accounts
         else {
             return Err(ProgramError::NotEnoughAccountKeys);
         };

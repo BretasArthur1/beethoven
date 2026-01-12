@@ -2,10 +2,10 @@ use {
     crate::Swap,
     core::mem::MaybeUninit,
     pinocchio::{
-        AccountView, Address, ProgramResult,
-        cpi::{Signer, invoke_signed},
+        cpi::{invoke_signed, Signer},
         error::ProgramError,
         instruction::{InstructionAccount, InstructionView},
+        AccountView, Address, ProgramResult,
     },
 };
 
@@ -61,23 +61,8 @@ impl<'info> TryFrom<&'info [AccountView]> for GammaSwapAccounts<'info> {
             return Err(ProgramError::NotEnoughAccountKeys);
         }
 
-        let [
-            gamma_program,
-            payer,
-            authority,
-            amm_config,
-            pool_state,
-            input_token_account,
-            output_token_account,
-            input_vault,
-            output_vault,
-            input_token_program,
-            output_token_program,
-            input_token_mint,
-            output_token_mint,
-            observation_state,
-            ..,
-        ] = accounts
+        let [gamma_program, payer, authority, amm_config, pool_state, input_token_account, output_token_account, input_vault, output_vault, input_token_program, output_token_program, input_token_mint, output_token_mint, observation_state, ..] =
+            accounts
         else {
             return Err(ProgramError::NotEnoughAccountKeys);
         };

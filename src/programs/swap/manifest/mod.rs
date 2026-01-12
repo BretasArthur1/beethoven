@@ -2,10 +2,10 @@ use {
     crate::Swap,
     core::mem::MaybeUninit,
     pinocchio::{
-        AccountView, Address, ProgramResult,
-        cpi::{Signer, invoke_signed},
+        cpi::{invoke_signed, Signer},
         error::ProgramError,
         instruction::{InstructionAccount, InstructionView},
+        AccountView, Address, ProgramResult,
     },
 };
 
@@ -82,24 +82,8 @@ impl<'info> TryFrom<&'info [AccountView]> for ManifestSwapAccounts<'info> {
             return Err(ProgramError::NotEnoughAccountKeys);
         }
 
-        let [
-            manifest_program,
-            payer,
-            owner,
-            market,
-            system_program,
-            trader_base,
-            trader_quote,
-            base_vault,
-            quote_vault,
-            token_program_base,
-            base_mint,
-            token_program_quote,
-            quote_mint,
-            global,
-            global_vault,
-            ..,
-        ] = accounts
+        let [manifest_program, payer, owner, market, system_program, trader_base, trader_quote, base_vault, quote_vault, token_program_base, base_mint, token_program_quote, quote_mint, global, global_vault, ..] =
+            accounts
         else {
             return Err(ProgramError::NotEnoughAccountKeys);
         };

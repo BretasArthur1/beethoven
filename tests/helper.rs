@@ -34,8 +34,7 @@ pub const GAMMA_PROGRAM_ID: Pubkey =
     solana_sdk::pubkey!("GAMMA7meSFWaBXF25oSUgmGRwaWJfSFLQzPiSfPKqp2W");
 pub const MANIFEST_PROGRAM_ID: Pubkey =
     solana_sdk::pubkey!("MNFSTqtC93rEfYHB6hF82sKdZpUDFWkViLByLd1k1Ms");
-pub const SYSTEM_PROGRAM_ID: Pubkey =
-    solana_sdk::pubkey!("11111111111111111111111111111111");
+pub const SYSTEM_PROGRAM_ID: Pubkey = solana_sdk::pubkey!("11111111111111111111111111111111");
 
 pub mod discriminator {
     pub const DEPOSIT: u8 = 0;
@@ -311,10 +310,10 @@ pub fn load_json_fixture(path: &str) -> (Pubkey, Account) {
     use base64::{engine::general_purpose::STANDARD, Engine};
     use std::str::FromStr;
 
-    let contents =
-        std::fs::read_to_string(path).unwrap_or_else(|_| panic!("Failed to read fixture: {}", path));
-    let json: serde_json::Value =
-        serde_json::from_str(&contents).unwrap_or_else(|_| panic!("Failed to parse JSON: {}", path));
+    let contents = std::fs::read_to_string(path)
+        .unwrap_or_else(|_| panic!("Failed to read fixture: {}", path));
+    let json: serde_json::Value = serde_json::from_str(&contents)
+        .unwrap_or_else(|_| panic!("Failed to parse JSON: {}", path));
 
     let pubkey_str = json["pubkey"].as_str().expect("Missing pubkey field");
     let pubkey = Pubkey::from_str(pubkey_str).expect("Invalid pubkey");
@@ -327,7 +326,9 @@ pub fn load_json_fixture(path: &str) -> (Pubkey, Account) {
 
     let data_array = account_json["data"].as_array().expect("Missing data array");
     let data_b64 = data_array[0].as_str().expect("Missing data string");
-    let data = STANDARD.decode(data_b64).expect("Failed to decode base64 data");
+    let data = STANDARD
+        .decode(data_b64)
+        .expect("Failed to decode base64 data");
 
     (
         pubkey,

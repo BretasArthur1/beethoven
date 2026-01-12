@@ -2,10 +2,10 @@ use {
     crate::Deposit,
     core::mem::MaybeUninit,
     pinocchio::{
-        AccountView, Address, ProgramResult,
-        cpi::{Signer, invoke_signed},
+        cpi::{invoke_signed, Signer},
         error::ProgramError,
         instruction::{InstructionAccount, InstructionView},
+        AccountView, Address, ProgramResult,
     },
 };
 
@@ -92,28 +92,8 @@ impl<'info> TryFrom<&'info [AccountView]> for KaminoDepositAccounts<'info> {
             return Err(ProgramError::NotEnoughAccountKeys);
         }
 
-        let [
-            kamino_lending_program,
-            owner,
-            obligation,
-            lending_market,
-            lending_market_authority,
-            reserve,
-            reserve_liquidity_mint,
-            reserve_liquidity_supply,
-            reserve_collateral_mint,
-            reserve_destination_deposit_collateral,
-            user_source_liquidity,
-            placeholder_user_destination_collateral,
-            collateral_token_program,
-            liquidity_token_program,
-            instruction_sysvar_account,
-            obligation_farm_user_state,
-            reserve_farm_state,
-            farms_program,
-            scope_oracle,
-            remaining_accounts @ ..,
-        ] = accounts
+        let [kamino_lending_program, owner, obligation, lending_market, lending_market_authority, reserve, reserve_liquidity_mint, reserve_liquidity_supply, reserve_collateral_mint, reserve_destination_deposit_collateral, user_source_liquidity, placeholder_user_destination_collateral, collateral_token_program, liquidity_token_program, instruction_sysvar_account, obligation_farm_user_state, reserve_farm_state, farms_program, scope_oracle, remaining_accounts @ ..] =
+            accounts
         else {
             return Err(ProgramError::NotEnoughAccountKeys);
         };

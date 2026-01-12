@@ -26,11 +26,16 @@ fn manifest_fixtures_dir() -> String {
 }
 
 fn beethoven_program_path() -> String {
-    format!("{}/target/deploy/beethoven_test.so", env!("CARGO_MANIFEST_DIR"))
+    format!(
+        "{}/target/deploy/beethoven_test.so",
+        env!("CARGO_MANIFEST_DIR")
+    )
 }
 
 fn get_token_balance(svm: &litesvm::LiteSVM, token_account: &Pubkey) -> u64 {
-    let account = svm.get_account(token_account).expect("Token account not found");
+    let account = svm
+        .get_account(token_account)
+        .expect("Token account not found");
     let token_data = TokenAccount::unpack(&account.data).expect("Failed to unpack token account");
     token_data.amount
 }
@@ -69,13 +74,19 @@ fn test_manifest_swap_loads_fixtures() {
     // Load vaults from manifest fixtures
     let base_vault = load_and_set_json_fixture(
         &mut svm,
-        &format!("{}/manifest_sol_usdc_base_vault.json", manifest_fixtures_dir()),
+        &format!(
+            "{}/manifest_sol_usdc_base_vault.json",
+            manifest_fixtures_dir()
+        ),
     );
     assert_eq!(base_vault, Pubkey::from_str(BASE_VAULT).unwrap());
 
     let quote_vault = load_and_set_json_fixture(
         &mut svm,
-        &format!("{}/manifest_sol_usdc_quote_vault.json", manifest_fixtures_dir()),
+        &format!(
+            "{}/manifest_sol_usdc_quote_vault.json",
+            manifest_fixtures_dir()
+        ),
     );
     assert_eq!(quote_vault, Pubkey::from_str(QUOTE_VAULT).unwrap());
 
@@ -99,11 +110,32 @@ fn test_manifest_swap_account_structure() {
         MANIFEST_PROGRAM_ID,
         &format!("{}/manifest_program.so", manifest_fixtures_dir()),
     );
-    load_and_set_json_fixture(&mut svm, &format!("{}/manifest_usdc_sol_market.json", manifest_fixtures_dir()));
-    load_and_set_json_fixture(&mut svm, &format!("{}/wsol_mint.json", common_fixtures_dir()));
-    load_and_set_json_fixture(&mut svm, &format!("{}/usdc_mint.json", common_fixtures_dir()));
-    load_and_set_json_fixture(&mut svm, &format!("{}/manifest_sol_usdc_base_vault.json", manifest_fixtures_dir()));
-    load_and_set_json_fixture(&mut svm, &format!("{}/manifest_sol_usdc_quote_vault.json", manifest_fixtures_dir()));
+    load_and_set_json_fixture(
+        &mut svm,
+        &format!("{}/manifest_usdc_sol_market.json", manifest_fixtures_dir()),
+    );
+    load_and_set_json_fixture(
+        &mut svm,
+        &format!("{}/wsol_mint.json", common_fixtures_dir()),
+    );
+    load_and_set_json_fixture(
+        &mut svm,
+        &format!("{}/usdc_mint.json", common_fixtures_dir()),
+    );
+    load_and_set_json_fixture(
+        &mut svm,
+        &format!(
+            "{}/manifest_sol_usdc_base_vault.json",
+            manifest_fixtures_dir()
+        ),
+    );
+    load_and_set_json_fixture(
+        &mut svm,
+        &format!(
+            "{}/manifest_sol_usdc_quote_vault.json",
+            manifest_fixtures_dir()
+        ),
+    );
 
     let wsol_mint = Pubkey::from_str(WSOL_MINT).unwrap();
     let usdc_mint = Pubkey::from_str(USDC_MINT).unwrap();
@@ -147,7 +179,7 @@ fn test_manifest_swap_account_structure() {
         AccountMeta::new_readonly(TOKEN_PROGRAM_ID, false),    // token_program_quote
         AccountMeta::new_readonly(MANIFEST_PROGRAM_ID, false), // quote_mint (optional -> program ID)
         AccountMeta::new(MANIFEST_PROGRAM_ID, false),          // global (optional -> program ID)
-        AccountMeta::new(MANIFEST_PROGRAM_ID, false),          // global_vault (optional -> program ID)
+        AccountMeta::new(MANIFEST_PROGRAM_ID, false), // global_vault (optional -> program ID)
     ];
 
     // ManifestSwapData: is_base_in (sell SOL), is_exact_in (exact input amount)
@@ -188,15 +220,27 @@ fn test_manifest_swap_cpi() {
         &mut svm,
         &format!("{}/manifest_usdc_sol_market.json", manifest_fixtures_dir()),
     );
-    load_and_set_json_fixture(&mut svm, &format!("{}/wsol_mint.json", common_fixtures_dir()));
-    load_and_set_json_fixture(&mut svm, &format!("{}/usdc_mint.json", common_fixtures_dir()));
     load_and_set_json_fixture(
         &mut svm,
-        &format!("{}/manifest_sol_usdc_base_vault.json", manifest_fixtures_dir()),
+        &format!("{}/wsol_mint.json", common_fixtures_dir()),
     );
     load_and_set_json_fixture(
         &mut svm,
-        &format!("{}/manifest_sol_usdc_quote_vault.json", manifest_fixtures_dir()),
+        &format!("{}/usdc_mint.json", common_fixtures_dir()),
+    );
+    load_and_set_json_fixture(
+        &mut svm,
+        &format!(
+            "{}/manifest_sol_usdc_base_vault.json",
+            manifest_fixtures_dir()
+        ),
+    );
+    load_and_set_json_fixture(
+        &mut svm,
+        &format!(
+            "{}/manifest_sol_usdc_quote_vault.json",
+            manifest_fixtures_dir()
+        ),
     );
     load_and_set_json_fixture(
         &mut svm,
@@ -218,13 +262,21 @@ fn test_manifest_swap_cpi() {
     // Debug: verify account owners
     let market_account = svm.get_account(&market).expect("Market not found");
     println!("Market {} owner: {}", market, market_account.owner);
-    
+
     let base_vault_account = svm.get_account(&base_vault).expect("Base vault not found");
-    println!("Base vault {} owner: {}", base_vault, base_vault_account.owner);
-    
-    let quote_vault_account = svm.get_account(&quote_vault).expect("Quote vault not found");
-    println!("Quote vault {} owner: {}", quote_vault, quote_vault_account.owner);
-    
+    println!(
+        "Base vault {} owner: {}",
+        base_vault, base_vault_account.owner
+    );
+
+    let quote_vault_account = svm
+        .get_account(&quote_vault)
+        .expect("Quote vault not found");
+    println!(
+        "Quote vault {} owner: {}",
+        quote_vault, quote_vault_account.owner
+    );
+
     assert_eq!(
         market_account.owner, MANIFEST_PROGRAM_ID,
         "Market should be owned by Manifest program"

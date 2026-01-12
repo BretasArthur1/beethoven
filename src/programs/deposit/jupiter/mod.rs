@@ -2,10 +2,10 @@ use {
     crate::Deposit,
     core::mem::MaybeUninit,
     pinocchio::{
-        AccountView, Address, ProgramResult,
-        cpi::{Signer, invoke_signed},
+        cpi::{invoke_signed, Signer},
         error::ProgramError,
         instruction::{InstructionAccount, InstructionView},
+        AccountView, Address, ProgramResult,
     },
 };
 
@@ -78,27 +78,8 @@ impl<'info> TryFrom<&'info [AccountView]> for JupiterEarnDepositAccounts<'info> 
             return Err(ProgramError::NotEnoughAccountKeys);
         }
 
-        let [
-            lending_program,
-            signer,
-            depositor_token_account,
-            recipient_token_account,
-            mint,
-            lending_admin,
-            lending,
-            f_token_mint,
-            supply_token_reserves_liquidity,
-            lending_supply_position_on_liquidity,
-            rate_model,
-            vault,
-            liquidity,
-            liquidity_program,
-            rewards_rate_model,
-            token_program,
-            associated_token_program,
-            system_program,
-            ..,
-        ] = accounts
+        let [lending_program, signer, depositor_token_account, recipient_token_account, mint, lending_admin, lending, f_token_mint, supply_token_reserves_liquidity, lending_supply_position_on_liquidity, rate_model, vault, liquidity, liquidity_program, rewards_rate_model, token_program, associated_token_program, system_program, ..] =
+            accounts
         else {
             return Err(ProgramError::NotEnoughAccountKeys);
         };

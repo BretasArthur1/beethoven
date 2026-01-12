@@ -1,6 +1,6 @@
 use {
-    beethoven::{Swap, SwapContext, SwapData, try_from_swap_context},
-    pinocchio::{AccountView, ProgramResult, error::ProgramError},
+    beethoven::{try_from_swap_context, Swap, SwapContext, SwapData},
+    pinocchio::{error::ProgramError, AccountView, ProgramResult},
 };
 
 /// Instruction data for Swap

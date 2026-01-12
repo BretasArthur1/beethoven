@@ -1,7 +1,7 @@
 #![no_std]
 #![allow(unexpected_cfgs)]
 
-use pinocchio::{AccountView, Address, ProgramResult, entrypoint, error::ProgramError};
+use pinocchio::{entrypoint, error::ProgramError, AccountView, Address, ProgramResult};
 
 mod deposit;
 mod swap;

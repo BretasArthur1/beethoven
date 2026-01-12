@@ -2,10 +2,10 @@ use {
     crate::Swap,
     core::mem::MaybeUninit,
     pinocchio::{
-        AccountView, Address, ProgramResult,
-        cpi::{Signer, invoke_signed},
+        cpi::{invoke_signed, Signer},
         error::ProgramError,
         instruction::{InstructionAccount, InstructionView},
+        AccountView, Address, ProgramResult,
     },
 };
 
@@ -82,26 +82,8 @@ impl<'info> TryFrom<&'info [AccountView]> for HeavenSwapAccounts<'info> {
             return Err(ProgramError::NotEnoughAccountKeys);
         }
 
-        let [
-            heaven_program,
-            token_a_owner,
-            token_b_owner,
-            ata_program,
-            system_program,
-            pool_state,
-            user,
-            token_a_mint,
-            token_b_mint,
-            user_token_a_account,
-            user_token_b_account,
-            pool_token_a_account,
-            pool_token_b_account,
-            protocol_config,
-            ix_sysvar,
-            chainlink_id,
-            chainlink_sol_usd_feed,
-            ..,
-        ] = accounts
+        let [heaven_program, token_a_owner, token_b_owner, ata_program, system_program, pool_state, user, token_a_mint, token_b_mint, user_token_a_account, user_token_b_account, pool_token_a_account, pool_token_b_account, protocol_config, ix_sysvar, chainlink_id, chainlink_sol_usd_feed, ..] =
+            accounts
         else {
             return Err(ProgramError::NotEnoughAccountKeys);
         };

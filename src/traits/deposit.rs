@@ -1,5 +1,5 @@
 use pinocchio::{
-    AccountView, ProgramResult, address::address_eq, cpi::Signer, error::ProgramError,
+    address::address_eq, cpi::Signer, error::ProgramError, AccountView, ProgramResult,
 };
 
 /// Core trait for deposit operations across different protocols (Kamino, Jupiter, etc.)

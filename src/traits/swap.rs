@@ -1,5 +1,5 @@
 use pinocchio::{
-    AccountView, ProgramResult, address::address_eq, cpi::Signer, error::ProgramError,
+    address::address_eq, cpi::Signer, error::ProgramError, AccountView, ProgramResult,
 };
 
 /// Core trait for swap operations across different DEX protocols.
@@ -103,9 +103,6 @@ pub enum SwapData<'a> {
 
     #[cfg(feature = "futarchy-swap")]
     Futarchy(crate::programs::swap::futarchy::FutarchySwapData),
-
-    #[cfg(feature = "gamma-swap")]
-    Gamma(()),
 }
 
 impl<'a> SwapContext<'a> {
@@ -154,12 +151,6 @@ impl<'a> SwapContext<'a> {
             SwapContext::Futarchy(_) => Ok(SwapData::Futarchy(
                 crate::programs::swap::futarchy::FutarchySwapData::try_from(data)?,
             )),
-
-            #[cfg(feature = "gamma-swap")]
-            SwapContext::Gamma(_) => {
-                let _ = data; // Gamma doesn't need extra data
-                Ok(SwapData::Gamma(()))
-            }
 
             #[allow(unreachable_patterns)]
             _ => Err(ProgramError::InvalidAccountData),

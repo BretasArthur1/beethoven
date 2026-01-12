@@ -2,10 +2,10 @@ use {
     crate::Swap,
     core::mem::MaybeUninit,
     pinocchio::{
-        AccountView, Address, ProgramResult,
-        cpi::{Signer, invoke_signed},
+        cpi::{invoke_signed, Signer},
         error::ProgramError,
         instruction::{InstructionAccount, InstructionView},
+        AccountView, Address, ProgramResult,
     },
 };
 
@@ -65,19 +65,8 @@ impl<'info> TryFrom<&'info [AccountView]> for FutarchySwapAccounts<'info> {
             return Err(ProgramError::NotEnoughAccountKeys);
         }
 
-        let [
-            futarchy_program,
-            dao,
-            user_base_account,
-            user_quote_account,
-            amm_base_vault,
-            amm_quote_vault,
-            user,
-            token_program,
-            event_authority,
-            program,
-            ..,
-        ] = accounts
+        let [futarchy_program, dao, user_base_account, user_quote_account, amm_base_vault, amm_quote_vault, user, token_program, event_authority, program, ..] =
+            accounts
         else {
             return Err(ProgramError::NotEnoughAccountKeys);
         };

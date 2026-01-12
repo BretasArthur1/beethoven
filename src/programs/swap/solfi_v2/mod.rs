@@ -2,10 +2,10 @@ use {
     crate::Swap,
     core::mem::MaybeUninit,
     pinocchio::{
-        AccountView, Address, ProgramResult,
-        cpi::{Signer, invoke_signed},
+        cpi::{invoke_signed, Signer},
         error::ProgramError,
         instruction::{InstructionAccount, InstructionView},
+        AccountView, Address, ProgramResult,
     },
 };
 
@@ -78,23 +78,8 @@ impl<'info> TryFrom<&'info [AccountView]> for SolFiV2SwapAccounts<'info> {
             return Err(ProgramError::NotEnoughAccountKeys);
         }
 
-        let [
-            solfi_v2_program,
-            token_transfer_authority,
-            market_account,
-            oracle_account,
-            config_account,
-            base_vault,
-            quote_vault,
-            user_base_ata,
-            user_quote_ata,
-            base_mint,
-            quote_mint,
-            base_token_program,
-            quote_token_program,
-            instructions_sysvar,
-            ..,
-        ] = accounts
+        let [solfi_v2_program, token_transfer_authority, market_account, oracle_account, config_account, base_vault, quote_vault, user_base_ata, user_quote_ata, base_mint, quote_mint, base_token_program, quote_token_program, instructions_sysvar, ..] =
+            accounts
         else {
             return Err(ProgramError::NotEnoughAccountKeys);
         };
