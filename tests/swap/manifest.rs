@@ -4,7 +4,7 @@ use {
         instruction::AccountMeta, program_pack::Pack, pubkey::Pubkey, signature::Keypair,
         signer::Signer,
     },
-    spl_token::state::Account as TokenAccount,
+    spl_token_interface::state::Account as TokenAccount,
     std::str::FromStr,
 };
 

@@ -1,0 +1,9 @@
+[package]
+name = "beethoven-core"
+description = "Core traits for Beethoven - Swap and Deposit"
+version = "0.0.1"
+license = "MIT"
+edition = "2021"
+
+[dependencies]
+pinocchio = { version = "0.10.0", features = ["cpi"] }

@@ -10,7 +10,7 @@ use {
         signer::Signer,
         transaction::Transaction,
     },
-    spl_token::state::{Account as TokenAccount, AccountState, Mint},
+    spl_token_interface::state::{Account as TokenAccount, AccountState, Mint},
 };
 
 // =============================================================================
@@ -51,7 +51,7 @@ pub fn setup_svm() -> LiteSVM {
 
 pub fn setup_svm_with_program(program_bytes: &[u8]) -> LiteSVM {
     let mut svm = LiteSVM::new();
-    svm.add_program(TEST_PROGRAM_ID, program_bytes);
+    let _ = svm.add_program(TEST_PROGRAM_ID, program_bytes);
     svm
 }
 
@@ -352,5 +352,5 @@ pub fn load_and_set_json_fixture(svm: &mut LiteSVM, path: &str) -> Pubkey {
 /// Load and deploy a program from .so file
 pub fn load_program(svm: &mut LiteSVM, program_id: Pubkey, so_path: &str) {
     let program_bytes = load_fixture_bytes(so_path);
-    svm.add_program(program_id, &program_bytes);
+    let _ = svm.add_program(program_id, &program_bytes);
 }

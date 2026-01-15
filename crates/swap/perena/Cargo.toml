@@ -1,0 +1,11 @@
+[package]
+name = "beethoven-swap-perena"
+description = "Perena DEX swap implementation for Beethoven"
+version = "0.0.1"
+license = "MIT"
+edition = "2021"
+
+[dependencies]
+beethoven-core = { path = "../../core" }
+pinocchio = { version = "0.10.0", features = ["cpi"] }
+five8_const = "0.1"
