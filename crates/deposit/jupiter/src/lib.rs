@@ -1,104 +1,52 @@
+#![no_std]
+
 use {
-    crate::Deposit,
+    beethoven_core::Deposit,
     core::mem::MaybeUninit,
     pinocchio::{
-        AccountView, Address, ProgramResult,
-        cpi::{Signer, invoke_signed},
+        cpi::{invoke_signed, Signer},
         error::ProgramError,
         instruction::{InstructionAccount, InstructionView},
+        AccountView, Address, ProgramResult,
     },
 };
 
-pub const JUPITER_EARN_PROGRAM_ID: Address = Address::new_from_array([0u8; 32]); // TODO: Replace with actual Jupiter Earn program ID
+pub const JUPITER_EARN_PROGRAM_ID: Address = Address::new_from_array([0u8; 32]);
 pub const DEPOSIT_DISCRIMINATOR: [u8; 8] = [242, 35, 198, 137, 82, 225, 242, 182];
 
-/// Jupiter earn protocol integration
 pub struct JupiterEarn;
 
-/// Account context for JupiterEarn's deposit instruction.
 pub struct JupiterEarnDepositAccounts<'info> {
-    /// Target lending program
     pub lending_program: &'info AccountView,
-    /// User signer (mutable, signer)
     pub signer: &'info AccountView,
-    /// User's token account to deposit from (mutable)
     pub depositor_token_account: &'info AccountView,
-    /// Recipient's token account to receive fTokens (mutable)
     pub recipient_token_account: &'info AccountView,
-    /// Token mint being deposited
     pub mint: &'info AccountView,
-    /// Lending admin account (readonly)
     pub lending_admin: &'info AccountView,
-    /// Lending account (mutable)
     pub lending: &'info AccountView,
-    /// fToken mint (mutable)
     pub f_token_mint: &'info AccountView,
-    /// Supply token reserves liquidity (mutable)
     pub supply_token_reserves_liquidity: &'info AccountView,
-    /// Lending supply position on liquidity (mutable)
     pub lending_supply_position_on_liquidity: &'info AccountView,
-    /// Rate model (readonly)
     pub rate_model: &'info AccountView,
-    /// Vault (mutable)
     pub vault: &'info AccountView,
-    /// Liquidity (mutable)
     pub liquidity: &'info AccountView,
-    /// Liquidity program (mutable)
     pub liquidity_program: &'info AccountView,
-    /// Rewards rate model (readonly)
     pub rewards_rate_model: &'info AccountView,
-    /// Token program
     pub token_program: &'info AccountView,
-    /// Associated token program
     pub associated_token_program: &'info AccountView,
-    /// System program
     pub system_program: &'info AccountView,
 }
 
 impl<'info> TryFrom<&'info [AccountView]> for JupiterEarnDepositAccounts<'info> {
     type Error = ProgramError;
 
-    /// Converts a slice of `AccountView` into validated `JupiterEarnDepositAccounts`.
-    ///
-    /// # Arguments
-    /// * `accounts` - Slice containing at least 18 accounts in the correct order
-    ///
-    /// # Returns
-    /// * `Ok(JupiterEarnDepositAccounts)` - Successfully parsed account context
-    /// * `Err(ProgramError::NotEnoughAccountKeys)` - Fewer than 18 accounts provided
-    ///
-    /// # Notes
-    /// * No upper bound is enforced - extra accounts are ignored (useful for `remaining_accounts`)
-    /// * Mutability and signer constraints are NOT validated here; Jupiter's program will
-    ///   enforce them during CPI, providing clearer error messages
-    /// * The `..` pattern allows passing more than 18 accounts without error
     fn try_from(accounts: &'info [AccountView]) -> Result<Self, Self::Error> {
-        // Require minimum of 18 accounts to prevent undefined behavior
         if accounts.len() < 18 {
             return Err(ProgramError::NotEnoughAccountKeys);
         }
 
-        let [
-            lending_program,
-            signer,
-            depositor_token_account,
-            recipient_token_account,
-            mint,
-            lending_admin,
-            lending,
-            f_token_mint,
-            supply_token_reserves_liquidity,
-            lending_supply_position_on_liquidity,
-            rate_model,
-            vault,
-            liquidity,
-            liquidity_program,
-            rewards_rate_model,
-            token_program,
-            associated_token_program,
-            system_program,
-            ..,
-        ] = accounts
+        let [lending_program, signer, depositor_token_account, recipient_token_account, mint, lending_admin, lending, f_token_mint, supply_token_reserves_liquidity, lending_supply_position_on_liquidity, rate_model, vault, liquidity, liquidity_program, rewards_rate_model, token_program, associated_token_program, system_program, ..] =
+            accounts
         else {
             return Err(ProgramError::NotEnoughAccountKeys);
         };
@@ -129,25 +77,11 @@ impl<'info> TryFrom<&'info [AccountView]> for JupiterEarnDepositAccounts<'info> 
 impl<'info> Deposit<'info> for JupiterEarn {
     type Accounts = JupiterEarnDepositAccounts<'info>;
 
-    /// Executes a deposit into Jupiter Earn protocol via CPI.
-    ///
-    /// This deposits liquidity tokens into Jupiter Earn and receives fTokens
-    /// in return, which represent the deposited position.
-    ///
-    /// # Arguments
-    /// * `ctx` - Account context required for the deposit (see `JupiterEarnDepositAccounts`)
-    /// * `amount` - Amount of liquidity tokens to deposit
-    /// * `signer_seeds` - Optional PDA signer seeds for CPI with signing
-    ///
-    /// # Returns
-    /// * `Ok(())` - Deposit completed successfully
-    /// * `Err(ProgramError)` - Invalid accounts or CPI failure
     fn deposit_signed(
         ctx: &JupiterEarnDepositAccounts<'info>,
         amount: u64,
         signer_seeds: &[Signer],
     ) -> ProgramResult {
-        // Build account metas for the Jupiter Earn deposit instruction
         let accounts = [
             InstructionAccount::writable_signer(ctx.signer.address()),
             InstructionAccount::writable(ctx.depositor_token_account.address()),
@@ -188,7 +122,6 @@ impl<'info> Deposit<'info> for JupiterEarn {
             ctx.system_program,
         ];
 
-        // Build instruction data: discriminator (8 bytes) + amount (8 bytes)
         let mut instruction_data = MaybeUninit::<[u8; 16]>::uninit();
         unsafe {
             let ptr = instruction_data.as_mut_ptr() as *mut u8;

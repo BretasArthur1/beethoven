@@ -3,12 +3,67 @@ name = "beethoven"
 description = "A Trait-based client that let you compose program extremely easily"
 version = "0.0.1"
 license = "MIT"
-edition = "2024"
+edition = "2021"
 
 [features]
-default = ["jupiter", "kamino"]
-jupiter = []
-kamino = []
+default = ["deposit", "swap"]
+
+# Action groups
+deposit = ["kamino-deposit", "jupiter-deposit"]
+swap = ["perena-swap", "solfi-swap", "solfi_v2-swap", "manifest-swap", "heaven-swap", "aldrin-swap", "aldrin_v2-swap", "futarchy-swap", "gamma-swap"]
+
+# Deposit protocols
+kamino-deposit = ["dep:beethoven-deposit-kamino"]
+jupiter-deposit = ["dep:beethoven-deposit-jupiter"]
+
+# Swap protocols
+perena-swap = ["dep:beethoven-swap-perena"]
+solfi-swap = ["dep:beethoven-swap-solfi"]
+solfi_v2-swap = ["dep:beethoven-swap-solfi-v2"]
+manifest-swap = ["dep:beethoven-swap-manifest"]
+heaven-swap = ["dep:beethoven-swap-heaven"]
+aldrin-swap = ["dep:beethoven-swap-aldrin"]
+aldrin_v2-swap = ["dep:beethoven-swap-aldrin-v2"]
+futarchy-swap = ["dep:beethoven-swap-futarchy"]
+gamma-swap = ["dep:beethoven-swap-gamma"]
 
 [dependencies]
+beethoven-core = { path = "crates/core" }
 pinocchio = { version = "0.10.0", features = ["cpi"] }
+
+# Optional protocol crates
+beethoven-deposit-kamino = { path = "crates/deposit/kamino", optional = true }
+beethoven-deposit-jupiter = { path = "crates/deposit/jupiter", optional = true }
+beethoven-swap-perena = { path = "crates/swap/perena", optional = true }
+beethoven-swap-solfi = { path = "crates/swap/solfi", optional = true }
+beethoven-swap-solfi-v2 = { path = "crates/swap/solfi-v2", optional = true }
+beethoven-swap-manifest = { path = "crates/swap/manifest", optional = true }
+beethoven-swap-heaven = { path = "crates/swap/heaven", optional = true }
+beethoven-swap-aldrin = { path = "crates/swap/aldrin", optional = true }
+beethoven-swap-aldrin-v2 = { path = "crates/swap/aldrin-v2", optional = true }
+beethoven-swap-futarchy = { path = "crates/swap/futarchy", optional = true }
+beethoven-swap-gamma = { path = "crates/swap/gamma", optional = true }
+
+[workspace]
+members = [
+    "crates/core",
+    "crates/deposit/kamino",
+    "crates/deposit/jupiter",
+    "crates/swap/perena",
+    "crates/swap/solfi",
+    "crates/swap/solfi-v2",
+    "crates/swap/manifest",
+    "crates/swap/heaven",
+    "crates/swap/aldrin",
+    "crates/swap/aldrin-v2",
+    "crates/swap/futarchy",
+    "crates/swap/gamma",
+    "program-test",
+]
+
+[dev-dependencies]
+litesvm = "0.9.1"
+solana-sdk = "3.0"
+spl-token-interface = "2"
+base64 = "0.22"
+serde_json = "1"
