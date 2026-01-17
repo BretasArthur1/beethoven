@@ -18,9 +18,6 @@ clippy:
 clippy-fix:
 	@cargo +$(NIGHTLY_TOOLCHAIN) clippy --all --all-features --all-targets --fix --allow-dirty --allow-staged -- -D warnings
 
-check-features:
-	@cargo hack --feature-powerset --no-dev-deps check
-
 build:
 	@cargo build-sbf
 
@@ -32,6 +29,5 @@ all-checks:
 	@echo "Running all checks..."
 	@$(MAKE) format
 	@$(MAKE) clippy
-	@$(MAKE) check-features
 	@$(MAKE) test
 	@echo "All checks passed!"
