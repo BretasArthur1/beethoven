@@ -1,6 +1,9 @@
-use pinocchio::{address::address_eq, cpi::Signer, error::ProgramError, AccountView, ProgramResult};
-
-use crate::Swap;
+use {
+    crate::Swap,
+    pinocchio::{
+        address::address_eq, cpi::Signer, error::ProgramError, AccountView, ProgramResult,
+    },
+};
 
 /// Typed context for swap operations, discriminated by protocol.
 pub enum SwapContext<'info> {
@@ -71,9 +74,9 @@ impl<'a> SwapContext<'a> {
             )),
 
             #[cfg(feature = "solfi-swap")]
-            SwapContext::SolFi(_) => Ok(SwapData::SolFi(
-                crate::solfi::SolFiSwapData::try_from(data)?,
-            )),
+            SwapContext::SolFi(_) => Ok(SwapData::SolFi(crate::solfi::SolFiSwapData::try_from(
+                data,
+            )?)),
 
             #[cfg(feature = "solfi_v2-swap")]
             SwapContext::SolFiV2(_) => Ok(SwapData::SolFiV2(
@@ -138,15 +141,13 @@ impl<'a> Swap<'a> for SwapContext<'a> {
             }
 
             #[cfg(feature = "solfi-swap")]
-            (SwapContext::SolFi(accounts), SwapData::SolFi(d)) => {
-                crate::solfi::SolFi::swap_signed(
-                    accounts,
-                    in_amount,
-                    minimum_out_amount,
-                    d,
-                    signer_seeds,
-                )
-            }
+            (SwapContext::SolFi(accounts), SwapData::SolFi(d)) => crate::solfi::SolFi::swap_signed(
+                accounts,
+                in_amount,
+                minimum_out_amount,
+                d,
+                signer_seeds,
+            ),
 
             #[cfg(feature = "solfi_v2-swap")]
             (SwapContext::SolFiV2(accounts), SwapData::SolFiV2(d)) => {
@@ -255,10 +256,7 @@ pub fn try_from_swap_context<'info>(
     }
 
     #[cfg(feature = "solfi-swap")]
-    if address_eq(
-        detector_account.address(),
-        &crate::solfi::SOLFI_PROGRAM_ID,
-    ) {
+    if address_eq(detector_account.address(), &crate::solfi::SOLFI_PROGRAM_ID) {
         let ctx = crate::solfi::SolFiSwapAccounts::try_from(accounts)?;
         return Ok(SwapContext::SolFi(ctx));
     }
@@ -318,10 +316,7 @@ pub fn try_from_swap_context<'info>(
     }
 
     #[cfg(feature = "gamma-swap")]
-    if address_eq(
-        detector_account.address(),
-        &crate::gamma::GAMMA_PROGRAM_ID,
-    ) {
+    if address_eq(detector_account.address(), &crate::gamma::GAMMA_PROGRAM_ID) {
         let ctx = crate::gamma::GammaSwapAccounts::try_from(accounts)?;
         return Ok(SwapContext::Gamma(ctx));
     }

@@ -307,8 +307,10 @@ pub fn load_fixture_account(path: &str, owner: &Pubkey) -> Account {
 /// Load a JSON fixture exported by `solana account --output json-compact`
 /// Returns (pubkey, Account)
 pub fn load_json_fixture(path: &str) -> (Pubkey, Account) {
-    use base64::{engine::general_purpose::STANDARD, Engine};
-    use std::str::FromStr;
+    use {
+        base64::{engine::general_purpose::STANDARD, Engine},
+        std::str::FromStr,
+    };
 
     let contents = std::fs::read_to_string(path)
         .unwrap_or_else(|_| panic!("Failed to read fixture: {}", path));
