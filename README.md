@@ -34,6 +34,10 @@ tx.remainingAccounts([JUPITER_PROGRAM_ID, vault, userAccount, ...])
 
 ---
 
+## Why it matters
+
+Beethoven reduces integration overhead for both protocol teams and application developers. Protocols only implement the Beethoven traits once, and every downstream program can route to them without upgrades. Programs keep full control over which protocols are enabled through feature flags, making security reviews explicit and scoped.
+
 ## How it works
 
 **Protocol detection:** First account in the slice must be the target program ID.
@@ -122,6 +126,43 @@ All support PDA signing via `deposit_signed(accounts, amount, &[signer_seeds])`.
 
 ---
 
+## Quickstart
+
+Add Beethoven to your program:
+
+```toml
+[dependencies]
+beethoven = "0.1"
+```
+
+Use the protocol-agnostic action helpers:
+
+```rust
+use beethoven::deposit;
+
+pub fn deposit_anywhere(ctx: Context<Deposit>, amount: u64) -> Result<()> {
+    deposit(&ctx.remaining_accounts, amount)?;
+    Ok(())
+}
+```
+
+Enable only the protocols you have audited:
+
+```toml
+beethoven = { version = "0.1", features = ["kamino", "jupiter"] }
+```
+
+## Local development
+
+```bash
+make format
+make clippy
+make test
+make test-upstream
+```
+
+Tests require the Solana CLI and build the SBF program in `program-test`.
+
 ## Integrating Your Protocol
 
 **For protocol developers:** Submit a PR to make your protocol available to all Beethoven users.
@@ -203,6 +244,8 @@ if pubkey_eq(detector_account.address(), &crate::programs::your_protocol::YOUR_P
 
 **That's it.** Submit the PR and programs can start routing to you.
 
+For review expectations and checklists, see `CONTRIBUTING.md`.
+
 ---
 
 ## Supported actions
@@ -218,5 +261,9 @@ More actions (withdraw, borrow, repay) coming when needed.
 Uses [pinocchio](https://github.com/fuzz-land/pinocchio) for zero-overhead abstractions. No anchor bloat.
 
 ---
+
+## Contributing
+
+We welcome protocol integrations, bug fixes, and improvements. Please read `CONTRIBUTING.md` for development setup, tests, and PR guidelines.
 
 **Beethoven** - Client-side protocol routing for Solana programs.
